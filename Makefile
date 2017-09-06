@@ -1,26 +1,25 @@
-TARGET = liblras1130_pi.a
+TARGET = <put the application name here>
 
-INCLUDES = -I.
-CPPFLAGS = $(INCLUDES) -O0 -g -Wall -std=c++11
-LFLAGS = -shared
+INCLUDE_DIRS = -I../.. -I../../lras1130_pi
+CPPFLAGS = $(INCLUDE_DIRS) -O0 -g -Wall -std=c++11 -c
 
-HEADERS = Arduino.h Wire.h serialPi.h utils.h LRAS1130.h LRAS1130Picture12x11.h LRAS1130Picture24x5.h
-OBJECTS = main.o wirePi.o serialPi.o ../LRAS1130.o ../LRAS1130Picture12x11.o ../LRAS1130Picture24x5.o 
+LIB_DIRS = -L../../lras1130_pi
+LIBS = -llras1130_pi -lwiringPi
+LDFLAGS = $(LIB_DIRS) $(LIBS)
+
+OBJECTS = $(TARGET).o
 
 .PHONY: all
 all: $(TARGET)
 
 $(TARGET) : $(OBJECTS)
-#	g++ $(LFLAGS) -o $@ $(OBJECTS) $(LIBS)
-	ar rcs $@ $(OBJECTS)
+	g++ -o $@ $< $(LDFLAGS)
 
-%.o: %.cpp $(HEADERS)
-	g++ $(CPPFLAGS) -o $@ $<
-
-%.o: ../%.cpp $(HEADERS)
-	g++ $(CPPFLAGS) -o $@ $<
+%.cpp: %.ino
+	cp $< $@
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET) *.o ../*.o
+	rm -f $(TARGET) *.o 
+
 
