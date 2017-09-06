@@ -29,7 +29,7 @@ Procedure:
        cd ../examples/MovingPixel
        cp ../../lras1130_pi/applications/Makefile .
        <modify the Makefile to define the TARGET as the name of the application>
-       build
+       make
        ./MovingPixel
 
  6.  Create an application of you own using the Lucky Resistor API.  Simply use
