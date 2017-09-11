@@ -1,4 +1,4 @@
-TARGET = <put the application name here>
+TARGET = windchime
 
 INCLUDE_DIRS = -I../../.. -I../.. -I../../lras1130_pi
 CPPFLAGS = $(INCLUDE_DIRS) -O0 -g -Wall -std=c++11 -c

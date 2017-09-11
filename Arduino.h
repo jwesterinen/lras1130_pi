@@ -18,4 +18,4 @@ uint8_t random(int n);
 // the one and only Serial and Wire objects references
 extern WirePi Wire;
 extern SerialPi Serial;
-
+extern bool NoLoop;
