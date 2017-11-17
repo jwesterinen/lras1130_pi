@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# This script builds LRAS1130 examples without requiring any change to the
+# original LRAS1130 project.  The example must have the same name as its
+# directory.  The lras1130_pi library must be installed and built.
+# 
+# Synopsis: build [<lras113_pi relative directory>]
+#
+# The default lras113_pi relative directory is ../../../lras1130_pi
+#
+
+if [ -z "$1" ]; then
+	LRAS1130_PI_DIR="../../../lras1130_pi"
+else
+	LRAS1130_PI_DIR=$1
+fi
+
+make -f $LRAS1130_PI_DIR/applications/Makefile TARGET=${PWD##*/} LRAS1130_PI_DIR=$LRAS1130_PI_DIR
+
