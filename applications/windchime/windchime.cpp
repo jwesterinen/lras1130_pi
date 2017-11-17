@@ -66,7 +66,7 @@ void setup() {
   ledDriver.setBlinkAndPwmSetAll(0);
   ledDriver.setCurrentSource(AS1130::Current30mA);
   ledDriver.setScanLimit(AS1130::ScanLimitFull);
-  ledDriver.setScrollingEnabled(false);
+  //ledDriver.setScrollingEnabled(false);
   ledDriver.setMovieEndFrame(AS1130::MovieEndWithFirstFrame);
   ledDriver.setMovieFrameCount(3);
   ledDriver.setFrameDelayMs(100);
