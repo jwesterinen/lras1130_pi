@@ -22,12 +22,20 @@ uint8_t random(int n)
 WirePi Wire;
 SerialPi Serial;
 
+// global argc and argv
+int g_argc;
+char** g_argv;
+
 // global flag to signify that loop doesn't need to be called --
 // set this to "true" in the application's setup() if no looping is needed
 bool NoLoop = false;
 
 int main(int argc, char** argv)
 {
+	// init global arguments
+	g_argc = argc;
+	g_argv = argv;
+
 	// seed the random number generator
 	srandom(time(NULL));
 

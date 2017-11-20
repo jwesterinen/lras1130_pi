@@ -15,55 +15,45 @@ struct Position
     }
 };
 
-struct Bitmap
+struct Picture : public AS1130Picture24x5
 {
-  bool bitmap[24][5];
+  Picture()
+  {}
 
-  Bitmap()
+  bool Set(const Position& pos, bool state)
   {
-    Clear();
-  }
-
-  void Clear()
-  {
-    for (int x = 0; x < 24; x++)
-      for (int y = 0; y < 5; y++)
-        bitmap[x][y] = false;
-  }
-
-  // attempt to set the bit in the map
-  bool Set(uint8_t x, uint8_t y)
-  {
-    if (!bitmap[x][y])
+    if (getPixel(pos.X, pos.Y) != state)
     {
-      // if not set do so and return true
-      bitmap[x][y] = true;
+      // if not set to the given do so and return true
+      setPixel(pos.X, pos.Y, state);
       return true;
     }
 
-    // return false if the bit was already set
+    // return false if the bit was already set to the given state
     return false;
   }
 
-  // if all bits are set return true
-  bool IsFull()
+  // if all bits are set to the given state return true
+  bool IsFull(bool state)
   {
-    for (int x = 0; x < 24; x++)
-      for (int y = 0; y < 5; y++)
-        if (!bitmap[x][y])
+    for (int x = 0; x < Picture::getWidth(); x++)
+      for (int y = 0; y < Picture::getHeight(); y++)
+        if (getPixel(x, y) != state)
           return false;
     return true;
   }
 };
 
 AS1130 ledDriver;
-typedef AS1130Picture24x5 Picture;
-Picture picture;
+bool isRandom;
 
 void setup() {
   Wire.begin();
   Serial.begin(115200);
     
+    // check for arguments
+    isRandom = (g_argc > 1) ? true : false;
+        
   // give the device a chance to initialize
   delay(100); 
   
@@ -87,45 +77,54 @@ void setup() {
 void GetNewPosition(Position &pos)
 {
   const uint8_t direction = random(4);
-  switch (direction) 
+
+  if (isRandom)
   {
-    case 0:
-      if (pos.X < Picture::getWidth()-1) 
-      {
-        ++pos.X;
-      }
-      break;
-    case 1:
-      if (pos.Y < Picture::getHeight()-1) 
-      {
-        ++pos.Y;
-      }
-      break;
-    case 2:
-      if (pos.X > 0) 
-      {
-        --pos.X;
-      }
-      break;
-    case 3:
-      if (pos.Y > 0) 
-      {
-        --pos.Y;
-      }
-      break;
+    pos.X = random(24);
+    pos.Y = random(5);
+  }
+  else
+  {
+    switch (direction) 
+    {
+      case 0:
+        if (pos.X < Picture::getWidth()-1) 
+        {
+          ++pos.X;
+        }
+        break;
+      case 1:
+        if (pos.Y < Picture::getHeight()-1) 
+        {
+          ++pos.Y;
+        }
+        break;
+      case 2:
+        if (pos.X > 0) 
+        {
+          --pos.X;
+        }
+        break;
+      case 3:
+        if (pos.Y > 0) 
+        {
+          --pos.Y;
+        }
+        break;
     }
+  }
 }
 
 void loop() 
 {
   static Position pos;
-  static Bitmap bitmap;
+  static Picture picture;
+  static bool state = true;
 
-  if (!bitmap.IsFull())
+  if (!picture.IsFull(state))
   {
-    if (bitmap.Set(pos.X, pos.Y))
+    if (picture.Set(pos, state))
     {
-      picture.setPixel(pos.X, pos.Y, true);
       ledDriver.setOnOffFrame(0, picture);
       delay(50);
     }
@@ -133,11 +132,7 @@ void loop()
   }
   else
   {
-    for (int x = 0; x < 24; x++)
-      for (int y = 0; y < 5; y++)
-        picture.setPixel(x, y, false);
-    ledDriver.setOnOffFrame(0, picture);
-    bitmap.Clear();
+    state = !state;
   }
 }
 

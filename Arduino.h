@@ -19,3 +19,5 @@ uint8_t random(int n);
 extern WirePi Wire;
 extern SerialPi Serial;
 extern bool NoLoop;
+extern int g_argc;
+extern char** argv;
