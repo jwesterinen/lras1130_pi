@@ -2,6 +2,11 @@
  * The Game of Life
  * 
  * This is John Conway's classic cellular automaton program for the Matrix.
+ * It is based on Lucky Resistor's LRAS1130 library which must be installed.
+ * This file is ostensibly an Arduino sketch, but it can be build for and run
+ * on an RPi using the lras1130_pi project on github:
+ *  https://github.com/jwesterinen/lras1130_pi.
+ * It is included in the applications in that project.
  * 
  * The Rules
  *
