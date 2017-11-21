@@ -38,12 +38,18 @@ struct LifeFrame : public AS1130Picture24x5
         memcpy(const_cast<uint8_t*>(getData()), other.getData(), 15);
     }
 
-    // seed the frame
+    // seed the frame with random data
     void Seed(int seedQty)
     {
         memset(const_cast<uint8_t*>(getData()), 0, 15);
         for (int n = 0; n < seedQty; n++)
             setPixel(random(getWidth()), random(getHeight()), true);
+    }
+
+    // seed the frame with an explicit pattern
+    void Seed(const uint8_t* data)
+    {
+        memcpy(const_cast<uint8_t*>(getData()), data, 15);
     }
 
     // equivalence operator
@@ -165,12 +171,27 @@ void setup() {
 }
 
 //#define SEED_WITH_EXPLICIT_DATA
-const uint8_t seedData[] = {
+const uint8_t seedData1[] = {
   0b00000000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000,
   0b00111000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000,
-  0b00000000, 0b00000000, 0b00000000};
+  0b00000000, 0b00000000, 0b00000000
+};
+const uint8_t seedData[] = {
+  0b00000000, 0b00000000, 0b00000000,
+  0b00000000, 0b00000000, 0b00001001,
+  0b00000000, 0b00000000, 0b00010000,
+  0b00000000, 0b00000000, 0b00010001,
+  0b00000000, 0b00000000, 0b00011110,
+};
+const uint8_t seedData2[] = {
+  0b00000000, 0b00000000, 0b00000000,
+  0b00000010, 0b00000000, 0b01000000,
+  0b00000111, 0b00000000, 0b11100000,
+  0b00000010, 0b00000000, 0b01000000,
+  0b00000000, 0b00000000, 0b00000000,
+};
 
 
 // display the current frame then get the next -- if there are no changes
@@ -187,7 +208,11 @@ void loop()
     delay(150);
     if (!GetNextFrame(frame))
     {
+#ifdef SEED_WITH_EXPLICIT_DATA
+        frame.Seed(seedData);
+#else
         frame.Seed(50);
+#endif
     }
 }
 
