@@ -35,28 +35,21 @@ struct LifeFrame : public AS1130Picture24x5
     // copy constructor
     LifeFrame(const LifeFrame& other)
     {
-        memcpy((uint8_t*)getData(), other.getData(), 15);
+        memcpy(const_cast<uint8_t*>(getData()), other.getData(), 15);
     }
 
     // seed the frame
     void Seed(int seedQty)
     {
-        for (int x = 0; x < getWidth(); x++)
-            for (int y = 0; y < getHeight(); y++)
-                setPixel(x, y, false);
+        memset(const_cast<uint8_t*>(getData()), 0, 15);
         for (int n = 0; n < seedQty; n++)
             setPixel(random(getWidth()), random(getHeight()), true);
     }
 
     // equivalence operator
-    bool operator==(LifeFrame& other)
+    bool operator==(const LifeFrame& other) const
     {
-        for (int x = 0; x < getWidth(); x++)
-            for (int y = 0; y < getHeight(); y++)
-                if (getPixel(x, y) != other.getPixel(x, y))
-                    return false;
-
-        return true;
+        return (memcmp(getData(), other.getData(), 15) == 0);
     }
 
     // return the number of active cells in the surrounding 8

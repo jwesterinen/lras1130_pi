@@ -26,14 +26,12 @@ Procedure:
 
  5.  Build and run any of the example applications, e.g. MovingPixel:
        cd ../LRAS1130/examples/MovingPixel
-       cp ../../../lras1130_pi/applications/build .
-       ./build
+       ../../../lras1130_pi/applications/build
        ./MovingPixel
 
  6.  Create an application of you own using the Lucky Resistor API:
        cd applications
        <create a directory and source file (must be the same name)>
        cd <new directory>
-       cp ../build .
-       ./build
+       ../build
        ./<application name>
