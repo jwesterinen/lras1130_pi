@@ -35,28 +35,27 @@ struct LifeFrame : public AS1130Picture24x5
     // copy constructor
     LifeFrame(const LifeFrame& other)
     {
-        memcpy((uint8_t*)getData(), other.getData(), 15);
+        memcpy(const_cast<uint8_t*>(getData()), other.getData(), 15);
     }
 
-    // seed the frame
+    // seed the frame with random data
     void Seed(int seedQty)
     {
-        for (int x = 0; x < getWidth(); x++)
-            for (int y = 0; y < getHeight(); y++)
-                setPixel(x, y, false);
+        memset(const_cast<uint8_t*>(getData()), 0, 15);
         for (int n = 0; n < seedQty; n++)
             setPixel(random(getWidth()), random(getHeight()), true);
     }
 
-    // equivalence operator
-    bool operator==(LifeFrame& other)
+    // seed the frame with an explicit pattern
+    void Seed(const uint8_t* data)
     {
-        for (int x = 0; x < getWidth(); x++)
-            for (int y = 0; y < getHeight(); y++)
-                if (getPixel(x, y) != other.getPixel(x, y))
-                    return false;
+        memcpy(const_cast<uint8_t*>(getData()), data, 15);
+    }
 
-        return true;
+    // equivalence operator
+    bool operator==(const LifeFrame& other) const
+    {
+        return (memcmp(getData(), other.getData(), 15) == 0);
     }
 
     // return the number of active cells in the surrounding 8
@@ -172,12 +171,27 @@ void setup() {
 }
 
 //#define SEED_WITH_EXPLICIT_DATA
-const uint8_t seedData[] = {
+const uint8_t seedData1[] = {
   0b00000000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000,
   0b00111000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000,
-  0b00000000, 0b00000000, 0b00000000};
+  0b00000000, 0b00000000, 0b00000000
+};
+const uint8_t seedData[] = {
+  0b00000000, 0b00000000, 0b00000000,
+  0b00000000, 0b00000000, 0b00001001,
+  0b00000000, 0b00000000, 0b00010000,
+  0b00000000, 0b00000000, 0b00010001,
+  0b00000000, 0b00000000, 0b00011110,
+};
+const uint8_t seedData2[] = {
+  0b00000000, 0b00000000, 0b00000000,
+  0b00000010, 0b00000000, 0b01000000,
+  0b00000111, 0b00000000, 0b11100000,
+  0b00000010, 0b00000000, 0b01000000,
+  0b00000000, 0b00000000, 0b00000000,
+};
 
 
 // display the current frame then get the next -- if there are no changes
@@ -194,7 +208,11 @@ void loop()
     delay(150);
     if (!GetNextFrame(frame))
     {
+#ifdef SEED_WITH_EXPLICIT_DATA
+        frame.Seed(seedData);
+#else
         frame.Seed(50);
+#endif
     }
 }
 
